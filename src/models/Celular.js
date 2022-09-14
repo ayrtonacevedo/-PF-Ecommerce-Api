@@ -11,7 +11,7 @@ module.exports = (sequelize) => {
     stock:{ type:DataTypes.INTEGER},
     image:{type:DataTypes.TEXT,},
     especificaciones:{type:DataTypes.ARRAY(DataTypes.STRING),},
-    description:{type:DataTypes.TEXT}
+    descripcion:{type:DataTypes.TEXT}
   },{
     timestamps:false
   });
