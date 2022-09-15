@@ -1,6 +1,7 @@
 const {Router}=require('express')
 const {obtenerProductos,obtenerProductosById, obtenerProductosByMarca, obtenerProductosByCapacidad, obtenerProductosByLinea, filtrarProductosMarcaAndLinea, obtenerProductosByStock, obtenerProductosByPrecio}=require('../Middleware/getProducto.middleware')
 const {crearProducto}=require('../Middleware/crearProducto.middleware')
+const { modificarProducto } = require('../Middleware/modificarProducto.middleware');
 
 
 const router=Router();
@@ -39,11 +40,22 @@ router.get('/:id', async(req,res,next)=>{
 })
 
 router.post('/',async(req,res,next)=>{
-    let {line, model, capacity, price, stock, image, spec, memoryRAM, description, disabled}=req.body
+    let {line, model, capacity, price, stock, image, spec, memoryRAM, description, disabled, brand}=req.body
     try{
         let productoCreado=await crearProducto(line, model, capacity, price, stock, image, spec, memoryRAM, description, brand, disabled)
         productoCreado.flag? res.send(productoCreado.message)
         :res.send(productoCreado.message)
+    }
+    catch(error){next(error)}
+})
+
+router.put('/:id',async(req,res,next)=>{
+    let {linea, modelo, capacidad, precio, stock, image, especificaciones, descripcion,marca}=req.body
+    let{id}=req.params
+    try{
+        let productoModificado=await modificarProducto(linea, modelo, capacidad, precio, stock, image, especificaciones, descripcion,marca)
+        productoModificado.flag? res.send(productoModificado.message)
+        :res.send(productoModificado.message)
     }
     catch(error){next(error)}
 })
