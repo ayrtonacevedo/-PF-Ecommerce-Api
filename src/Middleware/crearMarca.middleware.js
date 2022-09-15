@@ -1,10 +1,10 @@
-const {Marca}=require('../db')
+const {Brand}=require('../db')
 
 
-const crearMarca=async(marca)=>{
-    let existe = await Marca.findOne({where:{nombre:marca}})
+const crearMarca=async(brand)=>{
+    let existe = await Brand.findOne({where:{name:brand}})
     if(existe){return existe;}
-    else{return await Marca.create({nombre: marca.toUpperCase()})}
+    else{return await Brand.create({name: brand.toUpperCase()})}
 
 }
 module.exports={crearMarca}

@@ -1,45 +1,47 @@
-const {Celular, Marca,Op}=require('../db')
+const {Brand, Cell,Op}=require('../db')
 
 const obtenerProductos=async()=>{
-    let productos=await Celular.findAll({include:[{model:Marca}]})
+    let productos=await Cell.findAll({include:[{model:Brand}]})
     let toObj=[]
     productos?.map((e)=>{
         toObj.push({
             id:e.id,
-            linea:e.linea,
-            modelo:e.modelo,
-            capacidad:e.capacidad,
-            precio:e.precio,
+            line:e.line,
+            model:e.model,
+            capacity:e.capacity,
+            price:e.price,
             stock:e.stock,
-            imagen:e.imagen,
-            especificaciones:e.especificaciones,
-            descripcion:e.descripcion,
-            marca:e.marca.nombre
+            image:e.image,
+            spec:e.spec,
+            memoryRAM: e.memoryRAM,
+            description:e.description,
+            brand:e.brand.name
         })
     })
     return toObj;
 }
 const obtenerProductosById=async(id)=>{
-    let e= await Celular.findByPk(id,{include:[{model:Marca}]})
+    let e= await Cell.findByPk(id,{include:[{model:Brand}]})
     const producto={
         id:e.id,
-        linea:e.linea,
-        modelo:e.modelo,
-        capacidad:e.capacidad,
-        precio:e.capacidad,
+        line:e.line,
+        model: e.modelo,
+        capacity:e.capacity,
+        price:e.capacity,
         stock:e.stock,
-        imagen:e.imagen,
-        especificaciones:e.especificaciones,
-        descripcion:e.descripcion,
-        marca:e.marca.nombre
+        image:e.image,
+        spec:e.spec,
+        memoryRAM: e.memoryRAM,
+        description:e.description,
+        brand:e.brand.name
 
     }
     return producto
 }
 // filtrado por marca
-const obtenerProductosByMarca=async(marca)=>{
+const obtenerProductosByMarca=async(brand)=>{
     const allProductos=await obtenerProductos();
-    const filtrarProductosByMarca=allProductos.filter(c=>c.marca.toLowerCase().includes(marca.toLowerCase()));
+    const filtrarProductosByMarca=allProductos.filter(c=>c.brand.toLowerCase().includes(brand.toLowerCase()));
     if(filtrarProductosByMarca.length<=0){
         throw new Error("No Product")
     }else{
@@ -47,9 +49,9 @@ const obtenerProductosByMarca=async(marca)=>{
     }
 }
 // filtrado por linea
-const obtenerProductosByLinea=async(linea)=>{
+const obtenerProductosByLinea=async(line)=>{
     const allProductos=await obtenerProductos();
-    const filtrarProductosByLinea=allProductos.filter(c=>c.linea.toLowerCase().includes(linea.toLowerCase()));
+    const filtrarProductosByLinea=allProductos.filter(c=>c.line.toLowerCase().includes(line.toLowerCase()));
     if(filtrarProductosByLinea.length<=0){
         throw new Error("No Product")
     }else{
@@ -71,10 +73,10 @@ const obtenerProductosByStock=async(stockmin,stockmax)=>{
     }
 }
 // filtrado por precio
-const obtenerProductosByPrecio=async(precio)=>{
+const obtenerProductosByPrecio=async(price)=>{
     const allProductos=await obtenerProductos();
     const filtrarProductosByPrecio=allProductos.filter(c=>{
-        if(c.precio<=precio){
+        if(c.price<=price){
             return c;
         }
     });
@@ -89,14 +91,14 @@ const obtenerProductosByPrecio=async(precio)=>{
 const obtenerProductosByCapacidad=async(capacidad)=>{
     const allProductos=await obtenerProductos();
     const filtrarProductosByCapacidad=allProductos.filter(c=>{
-        if(c.capacidad.includes("MB")){
-            c.capacidad=parseInt(c.capacidad)*0.001+"GB"
+        if(c.capacity.includes("MB")){
+            c.capacity=parseInt(c.capacity)*0.001+"GB"
         }
-        if(c.capacidad.includes("TB")){
-            c.capacidad=parseInt(c.capacidad)*1000+"GB"
+        if(c.capacity.includes("TB")){
+            c.capacity=parseInt(c.capacity)*1000+"GB"
         }
-        const newdata=c.capacidad.split("GB");
-        if(parseInt(newdata[0])<=parseInt(capacidad)){
+        const newdata=c.capacity.split("GB");
+        if(parseInt(newdata[0])<=parseInt(capacity)){
             return c;
         }
     });
@@ -108,9 +110,9 @@ const obtenerProductosByCapacidad=async(capacidad)=>{
 }
 
 // filtrado por linea
-const filtrarProductosMarcaAndLinea=async(marca,linea)=>{
-    const allProductosByMarca=await obtenerProductosByMarca(marca);
-    const filtrarProductosBymarca_Linea=allProductosByMarca.filter(c=>c.linea.toLowerCase().includes(linea.toLowerCase()));
+const filtrarProductosMarcaAndLinea=async(brand,line)=>{
+    const allProductosByMarca=await obtenerProductosByMarca(brand);
+    const filtrarProductosBymarca_Linea=allProductosByMarca.filter(c=>c.linea.toLowerCase().includes(line.toLowerCase()));
     if(filtrarProductosBymarca_Linea.length<=0){
         throw new Error("No Product")
     }else{
