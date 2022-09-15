@@ -1,5 +1,5 @@
 const {Router}=require('express')
-const {obtenerProductos,obtenerProductosById, obtenerProductosByMarca, obtenerProductosByCapacidad, obtenerProductosByLinea, filtrarProductosMarcaAndLinea, obtenerProductosByStock, obtenerProductosByPrecio}=require('../Middleware/getProducto.middleware')
+const {obtenerProductos,obtenerProductosById}=require('../Middleware/getProducto.middleware')
 const {crearProducto}=require('../Middleware/crearProducto.middleware')
 const { modificarProducto } = require('../Middleware/modificarProducto.middleware');
 
@@ -7,25 +7,39 @@ const { modificarProducto } = require('../Middleware/modificarProducto.middlewar
 const router=Router();
 
 router.get('/', async(req,res,next)=>{
-    let {brand,line,stockmin,stockmax,price,capacity}=req.query;
+    const allproductos=await obtenerProductos();
+    const filters = req.query;
     try{
-        if(brand && line){
-            return res.status(200).json(await filtrarProductosMarcaAndLinea(brand,line));
-        }else if(stockmin && stockmax){
-            return res.status(200).json(await obtenerProductosByStock(stockmin,stockmax));
-        }else if(price){
-            return res.status(200).json(await obtenerProductosByPrecio(price));
-        }else if(capacity){
-            return res.status(200).json(await obtenerProductosByCapacidad(capacity));
-        }else if(brand){
-            return res.status(200).json(await obtenerProductosByMarca(brand));
-        }else if(line){
-            return res.status(200).json(await obtenerProductosByLinea(line));
-        }else{
-            let products = await obtenerProductos()
+        const filteredProduct = allproductos.filter(c => {
+            let isValid = true;
+            for (key in filters) {
+              console.log(key, c[key], filters[key]);
+              if(key=="capacity"){
+                let [min,max]=filters[key].split("/");
+                    isValid = isValid && (c[key]>=min&&c[key]<=max)
+              }else if(key=="price"){
+                let [min,max]=filters[key].split("/");
+                    isValid = isValid && (c[key]>=min&&c[key]<=max)
+              }else if(key=="stock"){
+                let [min,max]=filters[key].split("/");
+                    isValid = isValid && (c[key]>=min&&c[key]<=max)
+              }else if(key=="memoryRAM"){
+                let [min,max]=filters[key].split("/");
+                    isValid = isValid && (c[key]>=min&&c[key]<=max)
+              }else{
+                isValid = isValid && c[key].toLowerCase().includes(filters[key].toLowerCase());
+              }
+            }
+            return isValid;
+          });
+          if(!filters){
+            const products=await obtenerProductos();
             products.length>0?
             res.send(products):res.send({message:"No products"})
-        }
+          }else{
+            filteredProduct.length>0?
+            res.send(filteredProduct):res.send({message:"No products"})
+          }
     }
     catch(error){next(error.message); console.log(error.message)}
 })
