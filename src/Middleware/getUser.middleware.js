@@ -1,7 +1,8 @@
-const {User}=require('../db')
+const {User, Role}=require('../db')
 
 const obtenerUsers=async()=>{
-    let users=await User.findAll();
+    let users=await User.findAll({include:[{model:Role}]});
+    console.log(users)
     let toObj=[]
     users?.map((e)=>{
         toObj.push({
@@ -12,13 +13,14 @@ const obtenerUsers=async()=>{
             image: e.image,
             location: e.location,
             direction: e.direction,
-            rol: e.rol
+            disabled: e.disabled,
+            role: e.role.name
         })
     })
     return toObj;
 }
 const obtenerUserById=async(id)=>{
-    let e= await User.findByPk(id)
+    let e= await User.findByPk(id, {include:[{model:Role}]})
     const user={
         id: e.id,
         name: e.name,
@@ -27,7 +29,8 @@ const obtenerUserById=async(id)=>{
         image: e.image,
         location: e.location,
         direction: e.direction,
-        rol: e.rol
+        disabled: e.disabled,
+        role: e.role.name
     }
     return user
 }

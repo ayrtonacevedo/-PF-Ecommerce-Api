@@ -20,6 +20,7 @@
 const server = require('./src/app.js');
 const { conn } = require('./src/db.js');
 const {seederMarcas}=require('./src/Seeders/marca.seeders')
+const {seederRole}=require('./src/Seeders/role.seeders')
 const {productoSeeder}=require('./src/Seeders/producto.seeders')
 // Syncing all the models at once.
 conn.sync({ force: true }).then(() => {
@@ -27,6 +28,7 @@ conn.sync({ force: true }).then(() => {
     console.log('%s listening at 3001'); 
     seederMarcas();
     productoSeeder();
+    seederRole();
 
      // eslint-disable-line no-console 
   });
