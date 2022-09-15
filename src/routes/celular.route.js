@@ -41,6 +41,7 @@ router.get('/:id', async(req,res,next)=>{
 
 router.post('/',async(req,res,next)=>{
     let {line, model, capacity, price, stock, image, spec, memoryRAM, description, disabled, brand}=req.body
+    console.log(req.body,'soy lo que le llega al back')
     try{
         let productoCreado=await crearProducto(line, model, capacity, price, stock, image, spec, memoryRAM, description, brand, disabled)
         productoCreado.flag? res.send(productoCreado.message)
