@@ -1,11 +1,11 @@
-const {Marca}=require('../db');
+const {Brand}=require('../db');
 
 
 const obtenerMarcas=async()=>{
-    let marcas=await Marca.findAll()
+    let brands=await Brand.findAll()
     let toObj=[]
-    marcas?.map((e)=>{
-        toObj.push(e.nombre)
+    brands?.map((e)=>{
+        toObj.push(e.name)
     })
     return toObj;
 }

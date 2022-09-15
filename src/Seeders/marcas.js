@@ -1,3 +1,3 @@
-const MARCA=[{nombre:"APPLE"}, {nombre:"SAMSUNG"}, {nombre:"XIAOMI"}, {nombre:"LG"}, {nombre:"MOTOROLA"}]
+const MARCA=[{name:"APPLE"}, {name:"SAMSUNG"}, {name:"XIAOMI"}, {name:"LG"}, {name:"MOTOROLA"}]
 
 module.exports={MARCA}

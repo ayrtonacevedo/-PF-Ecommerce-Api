@@ -5,16 +5,16 @@ const router=Router()
 
 router.get('/', async(req,res,next)=>{
     try{
-        let marcas=await obtenerMarcas()
-        res.send(marcas)
+        let brands=await obtenerMarcas()
+        res.send(brands)
     }
     catch(error){next(error)}
 })
 router.post('/', async(req,res,next)=>{
-    let {marcas}=req.body
+    let {brands}=req.body
     try{
-        let marca=await crearMarca(marcas)
-        marca? res.send("Marca "+marcas+" agregado con exito"):res.send("Problema al agregar la marca")
+        let brand = await crearMarca(brands)
+        brand? res.send("Marca "+brands+" agregado con exito"):res.send("Problema al agregar la marca")
     }
     catch(error){next(error)}
 })
