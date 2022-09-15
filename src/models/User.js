@@ -9,7 +9,7 @@ module.exports=(sequelize)=>{
         location:{ type:DataTypes.STRING,allowNull:false},
         direction:{ type:DataTypes.STRING, allowNull:false},
         image:{type:DataTypes.TEXT},
-        rol:{type:DataTypes.ENUM('Administrador','Vendedor','Comprador')},
+        // rol:{type:DataTypes.ENUM('Administrador','Vendedor','Comprador')},
     },{
         timestamps:false
     });
