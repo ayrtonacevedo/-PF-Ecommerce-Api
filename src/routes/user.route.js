@@ -24,9 +24,9 @@ router.get('/:id', async(req,res,next)=>{
 })
 
 router.post('/',async(req,res,next)=>{
-    let {name, email, password, image, location, direction, rol}=req.body
+    let {name, email, password, image, location, direction, role }=req.body
     try{
-        let userCreado=await crearUser(name, email, password, image, location, direction, rol)
+        let userCreado=await crearUser(name, email, password, image, location, direction, role)
         userCreado.flag? res.send(userCreado.message)
         :res.send(userCreado.message)
     }
