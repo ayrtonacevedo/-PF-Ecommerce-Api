@@ -13,19 +13,11 @@ router.get('/', async(req,res,next)=>{
         const filteredProduct = allproductos.filter(c => {
             let isValid = true;
             for (key in filters) {
-              console.log(key, c[key], filters[key]);
-              if(key=="capacity"){
+              if(key=="capacity" || key=="price"){
                 let [min,max]=filters[key].split("/");
-                    isValid = isValid && (c[key]>=min&&c[key]<=max)
-              }else if(key=="price"){
-                let [min,max]=filters[key].split("/");
-                    isValid = isValid && (c[key]>=min&&c[key]<=max)
-              }else if(key=="stock"){
-                let [min,max]=filters[key].split("/");
-                    isValid = isValid && (c[key]>=min&&c[key]<=max)
+                    isValid = (c[key]>=min&&c[key]<=max)
               }else if(key=="memoryRAM"){
-                let [min,max]=filters[key].split("/");
-                    isValid = isValid && (c[key]>=min&&c[key]<=max)
+                isValid = `${c[key]}` === filters[key]
               }else{
                 isValid = isValid && c[key].toLowerCase().includes(filters[key].toLowerCase());
               }
