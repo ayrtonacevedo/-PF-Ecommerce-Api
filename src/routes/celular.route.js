@@ -1,3 +1,4 @@
+
 const {Router}=require('express')
 const {obtenerProductos,obtenerProductosById}=require('../Middleware/getProducto.middleware')
 const {crearProducto}=require('../Middleware/crearProducto.middleware')
@@ -5,7 +6,8 @@ const {crearMarca}=require('../Middleware/crearMarca.middleware')
 const { Cell } = require('../db');
 
 
-const router=Router();
+const router = Router();
+
 
 router.get('/', async(req,res,next)=>{
     const allproductos=await obtenerProductos();
@@ -34,26 +36,27 @@ router.get('/', async(req,res,next)=>{
             res.send(filteredProduct):res.send({message:"No products"})
           }
     }
-    catch(error){next(error.message); console.log(error.message)}
+    catch (error) { next(error.message); console.log(error.message) }
 })
 
-router.get('/:id', async(req,res,next)=>{
-    let {id}=req.params
-    try{
+router.get('/:id', async (req, res, next) => {
+    let { id } = req.params
+    try {
         let product = await obtenerProductosById(id)
         return res.send(product)
     }
-    catch(error){next(error); console.log(error)}
+    catch (error) { next(error); console.log(error) }
 })
 
-router.post('/',async(req,res,next)=>{
-    let {line, model, capacity, price, stock, image, spec, memoryRAM, description, disabled, brand}=req.body
-    try{
-        let productoCreado=await crearProducto(line, model, capacity, price, stock, image, spec, memoryRAM, description, brand, disabled)
-        productoCreado.flag? res.send(productoCreado.message)
-        :res.send(productoCreado.message)
+router.post('/', async (req, res, next) => {
+    let { line, model, capacity, price, stock, image, spec, memoryRAM, description, disabled, brand } = req.body
+    console.log(req.body, 'soy lo que le llega al back')
+    try {
+        let productoCreado = await crearProducto(line, model, capacity, price, stock, image, spec, memoryRAM, description, brand, disabled)
+        productoCreado.flag ? res.send(productoCreado.message)
+            : res.send(productoCreado.message)
     }
-    catch(error){next(error)}
+    catch (error) { next(error) }
 })
 
 router.put('/:id',async(req,res,next)=>{
@@ -85,3 +88,4 @@ router.put('/:id',async(req,res,next)=>{
 
 
 module.exports=router
+
