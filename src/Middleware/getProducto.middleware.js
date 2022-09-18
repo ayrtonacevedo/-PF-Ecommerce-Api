@@ -25,7 +25,7 @@ const obtenerProductosById=async(id)=>{
     const producto={
         id:e.id,
         line:e.line,
-        model: e.modelo,
+        model: e.model,
         capacity:e.capacity,
         price:e.capacity,
         stock:e.stock,

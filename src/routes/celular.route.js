@@ -1,7 +1,8 @@
 const {Router}=require('express')
 const {obtenerProductos,obtenerProductosById}=require('../Middleware/getProducto.middleware')
 const {crearProducto}=require('../Middleware/crearProducto.middleware')
-const { modificarProducto } = require('../Middleware/modificarProducto.middleware');
+const {crearMarca}=require('../Middleware/crearMarca.middleware')
+const { Cell } = require('../db');
 
 
 const router=Router();
@@ -56,16 +57,28 @@ router.post('/',async(req,res,next)=>{
 })
 
 router.put('/:id',async(req,res,next)=>{
-    let {linea, modelo, capacidad, precio, stock, image, especificaciones, descripcion,marca}=req.body
-    let{id}=req.params
+  let {line, model, capacity, price, stock, image, spec, memoryRAM, description, brand, disabled}=req.body
+  let {id}=req.params;
+    
     try{
-        let productoModificado=await modificarProducto(linea, modelo, capacidad, precio, stock, image, especificaciones, descripcion,marca)
-        productoModificado.flag? res.send(productoModificado.message)
-        :res.send(productoModificado.message)
+        await Cell.update(
+          {line, model, capacity, price, stock, image, spec, memoryRAM, description, brand, disabled},
+          {where: {id}}
+        )
+
+        if(brand){
+          let marca =await crearMarca(brand)
+          let cel = await Cell.findByPk(id)
+          
+          await cel.setBrand(marca)
+          cel.save();
+        }
+
+        return res.status(200).json("Cell updated")
+
     }
     catch(error){next(error)}
 })
-
 
 
 
