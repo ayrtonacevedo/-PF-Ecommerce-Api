@@ -27,7 +27,7 @@ const obtenerProductosById=async(id)=>{
         line:e.line,
         model: e.model,
         capacity:e.capacity,
-        price:e.capacity,
+        price:e.price,
         stock:e.stock,
         image:e.image,
         spec:e.spec,
