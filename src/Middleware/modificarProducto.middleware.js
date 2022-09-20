@@ -1,27 +1,32 @@
-const {Celular}=require('../db')
+const {Cell}=require('../db')
 const {crearMarca}=require('../Middleware/crearMarca.middleware')
 
-const modificarProducto=async(id, linea, modelo,capacidad,precio,stock,image, especificaciones, descripcion, marca)=>{
-    let producto= await Celular.findByPk(id)
+const modificarProducto=async(id, line, model, capacity, price, stock, image, spec, memoryRAM, description, brand, disabled)=>{
+    let producto= await Cell.findByPk(parseint(id))
+    console.log(producto)
+    line? producto.line=line:line
+   
+    model? producto.model=model:model
 
-    linea? producto.linea=linea:linea
-   
-    modelo? producto.modelo=modelo:modelo
-   
-    image? producto.image=image:image
-   
-    descripcion? producto.descripcion=descripcion:descripcion
-   
-    especificaciones? producto.especificaciones=especificaciones:especificaciones
-   
-    capacidad? producto.capacidad=capacidad:capacidad
-   
-    precio?producto.precio=parseInt(precio):precio
+    capacity? producto.capacity=capacity:capacity
+
+    price?producto.price=parseInt(price):price
 
     stock?producto.stock=parseInt(stock):stock
-    if(marca){
-        let mar=await crearMarca(marca)
-        await producto.setMarca(mar)
+   
+    image? producto.image=image:image
+
+    spec? producto.spec=spec:spec
+    
+    memoryRAM? producto.memoryRAM=memoryRAM:memoryRAM
+   
+    description? producto.description=description:description
+   
+    disabled? producto.disabled=disabled:disabled
+   
+    if(brand){
+        let mar=await crearMarca(brand)
+        await producto.setBrand(mar)
     }
     producto.save()
     return {flag:true, message:"Producto modificado"}
