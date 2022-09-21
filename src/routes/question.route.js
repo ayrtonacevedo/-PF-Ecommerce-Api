@@ -68,7 +68,7 @@ router.post('/:cellId', async (req, res, next)=>
 router.put('/:id',async(req,res,next)=>{
     let {answer}=req.body
     let {id}=req.params;
-      
+      console.log(answer)
       try{
         await Question.update(
             {answer},

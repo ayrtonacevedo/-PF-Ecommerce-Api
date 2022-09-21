@@ -1,4 +1,4 @@
-const {Brand, Cell,Op}=require('../db')
+const {Brand, Cell,Op, Question}=require('../db')
 
 const obtenerProductos=async()=>{
     let productos=await Cell.findAll({include:[{model:Brand}]})
@@ -21,7 +21,7 @@ const obtenerProductos=async()=>{
     return toObj;
 }
 const obtenerProductosById=async(id)=>{
-    let e= await Cell.findByPk(id,{include:[{model:Brand}]})
+    let e= await Cell.findByPk(id,{include:[{model:Brand}, {model:Question}]})
     const producto={
         id:e.id,
         line:e.line,
@@ -33,7 +33,8 @@ const obtenerProductosById=async(id)=>{
         spec:e.spec,
         memoryRAM: e.memoryRAM,
         description:e.description,
-        brand:e.brand.name
+        brand:e.brand.name,
+        questions: e.questions
 
     }
     return producto
