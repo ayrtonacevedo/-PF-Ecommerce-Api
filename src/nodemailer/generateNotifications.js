@@ -1,13 +1,20 @@
 const transportator = require('./configurations')
 
-async function sendEmailSale(usernameSeller,emailSeller,usernameBuyer,nameProducts){
+async function sendEmailSale(emailBuyer,usernameBuyer,nameProducts){
     transportator.sendMail({
         from: 'phonesecommerce@gmail.com',
-        to: emailSeller,
+        to: emailBuyer,
         subject: "NEW SALE!",
-        text: `Hi! ${usernameSeller}, we inform you that ${usernameBuyer} has made a purchase of the following products: ${nameProducts}`
-    }) 
+        text: `Hi! we inform you that ${usernameBuyer} has made a purchase of the following products: ${nameProducts}`
+    })
+    transportator.sendMail({
+        from: emailBuyer,
+        to: 'phonesecommerce@gmail.com',
+        subject: "NEW SALE!",
+        text: `Hi! we inform you that ${usernameBuyer} has made a purchase of the following products: ${nameProducts}`
+    })
 }
+
 async function sendClaimMail(msg,service,email){
     transportator.sendMail({
         from: email,
@@ -16,11 +23,12 @@ async function sendClaimMail(msg,service,email){
         text: `${msg} \n ${email}`
     })
 }
+
 async function autoClaimRes(username,email,service){
     transportator.sendMail({
         from: 'phonesecommerce@gmail.com',
         to: email,
-        subject: service,
+        subject: "Issue '"+service+"'",
         text: `Hello ${username}! Your claim will be answered shortly, thank you for informing us of your problem.`
     })
 }
