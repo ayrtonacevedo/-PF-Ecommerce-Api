@@ -56,7 +56,7 @@ router.post('/', async (req, res, next) => {
         productoCreado.flag ? res.send(productoCreado.message)
             : res.send(productoCreado.message)
     }
-    catch (error) { next(error) }
+    catch (error) { next(error) } 
 })
 
 router.put('/:id',async(req,res,next)=>{
