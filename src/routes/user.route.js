@@ -2,6 +2,8 @@ const {Router}=require('express')
 const {obtenerUsers,obtenerUserById}=require('../Middleware/getUser.middleware')
 const {crearUser}=require('../Middleware/crearUser.middleware')
 
+const {User, Role}=require("../db")
+
 
 const router=Router();
 
@@ -32,6 +34,30 @@ router.post('/',async(req,res,next)=>{
     }
     catch(error){next(error)}
 })
+
+router.put('/:id',async(req,res,next)=>{
+    let {name, email, password, image, location, direction, role, disabled }=req.body
+    let {id}=req.params;
+      
+      try{
+          await User.update(
+            {name, email, password, image, location, direction, role, disabled },
+            {where: {id}}
+          )
+  
+          if(role){
+            let rol = await Role.findOne({where: {name:role}})
+            let user = await User.findByPk(id)
+            
+            await user.setRole(rol)
+            user.save();
+          }
+  
+          return res.status(200).json("User updated")
+  
+      }
+      catch(error){next(error)}
+  })
 
 
 

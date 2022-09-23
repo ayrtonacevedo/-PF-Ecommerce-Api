@@ -15,7 +15,8 @@ const obtenerProductos=async()=>{
             spec:e.spec,
             memoryRAM: e.memoryRAM,
             description:e.description,
-            brand:e.brand.name
+            brand:e.brand.name,
+            disabled: e.disabled
         })
     })
     return toObj;
