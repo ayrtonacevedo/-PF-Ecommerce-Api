@@ -3,38 +3,52 @@ const { Router } = require('express')
 const { obtenerProductos, obtenerProductosById, obtenerProductosAdmin } = require('../Middleware/getProducto.middleware')
 const { crearProducto } = require('../Middleware/crearProducto.middleware')
 const { crearMarca } = require('../Middleware/crearMarca.middleware')
-const { Cell } = require('../db');
-
+const { Cell, Brand } = require('../db');
+const { Op } = require("sequelize");
 
 const router = Router();
 
 
+
 router.get('/home', async (req, res, next) => {
-  const allproductos = await obtenerProductos();
   const filters = req.query;
+  let condition = {}
   try {
-    const filteredProduct = allproductos.filter(c => {
-      let isValid = true;
-      for (key in filters) {
-        if (key == "capacity" || key == "price") {
-          let [min, max] = filters[key].split("/");
-          isValid = (c[key] >= min && c[key] <= max)
-        } else if (key == "memoryRAM") {
-          isValid = `${c[key]}` === filters[key]
-        } else {
-          isValid = isValid && c[key].toLowerCase().includes(filters[key].toLowerCase());
-        }
-      }
-      return isValid;
-    });
-    if (!filters) {
+    if (Object.keys(filters).length === 0) {
       const products = await obtenerProductos();
-      products.length > 0 ?
-        res.send(products) : res.send({ message: "No products" })
-    } else {
-      filteredProduct.length > 0 ?
-        res.send(filteredProduct) : res.send({ message: "No products" })
+      return res.send(products)
     }
+
+    for (key in filters) {
+      if (key === "capacity" || key === "price") {
+        let [min, max] = filters[key].split("/");
+        condition[key] = { [Op.between]: [min, max] }
+      } else {
+        if (key === "brand") { continue }
+        condition[key] = filters[key]
+      }
+    }
+    let products = await Cell.findAll({ include: [{ model: Brand }], where: condition })
+    if (filters.brand) {
+      products = products.filter(e => e.brand.name === filters.brand)
+    }
+    products = products.map((e) => {
+      return {
+        id: e.id,
+        line: e.line,
+        model: e.model,
+        capacity: e.capacity,
+        price: e.price,
+        stock: e.stock,
+        image: e.image,
+        spec: e.spec,
+        disabled: e.disabled,
+        memoryRAM: e.memoryRAM,
+        description: e.description,
+        brand: e.brand.name
+      }
+    })
+    return res.send(products)
   }
   catch (error) { next(error.message); console.log(error.message) }
 })
