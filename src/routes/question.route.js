@@ -1,5 +1,5 @@
 const {Router} = require('express')
-const{Question, Cell} = require('../db.js');
+const{Question, Cell, User, Role} = require('../db.js');
 
 const router = Router();
 
@@ -30,6 +30,25 @@ router.get('/:cellId', async (req, res, next)=>{
     catch (error) { next(error) ; console.log(error) }
 })
 
+router.get('/role/:email', async (req, res, next)=>{   
+    let {email} = req.params
+    try{        
+        let user = await User.findOne( { where: { email: email }, include: [{ model: Role }]})
+ 
+        let admin = false; 
+        
+        if(user){
+            if(!(user.role.name === "Cliente")){
+                admin = true;
+            }
+        }
+
+        res.send(admin);    
+    }
+    catch (error) { next(error) ; console.log(error) }
+})
+
+
 router.post('/:cellId', async (req, res, next)=>
 {
     let {emailUser, emailAdmin, question}=req.body
@@ -49,7 +68,7 @@ router.post('/:cellId', async (req, res, next)=>
 router.put('/:id',async(req,res,next)=>{
     let {answer}=req.body
     let {id}=req.params;
-      
+      console.log(answer)
       try{
         await Question.update(
             {answer},
