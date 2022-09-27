@@ -37,8 +37,15 @@ const { Cell, Brand, User, Order, Role, Question } = sequelize.models;
 Cell.belongsTo(Brand);
 Brand.hasMany(Cell);
 
-User.belongsToMany(Order, {through: 'user_order'});
-Order.belongsToMany(User, {through: 'user_order'});
+// User.belongsToMany(Order, {through: 'user_order'});
+// Order.belongsToMany(User, {through: 'user_order'});
+
+User.belongsToMany(Cell, {through: 'userCell'});
+Cell.belongsToMany(User, {through: 'userCell'});
+// Order.belongsTo(User);
+      //FALTA IMPORTAR ORDERS
+Order.belongsToMany(Cell, {through: 'orderCell'});
+Cell.belongsToMany(Order, {through: 'orderCell'});
 
 User.belongsTo(Role);
 Role.hasMany(User);
@@ -54,5 +61,5 @@ module.exports = {
   ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');
   conn: sequelize,     // para importart la conexión { conn } = require('./db.js');
   Op,
-  Brand,Cell,User,Role,Question
+  Brand,Cell,User,Role,Question,Order
 };

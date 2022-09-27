@@ -1,6 +1,6 @@
 
 const { Router } = require('express')
-const { obtenerProductos, obtenerProductosById } = require('../Middleware/getProducto.middleware')
+const { obtenerProductos, obtenerProductosById, obtenerProductosAdmin } = require('../Middleware/getProducto.middleware')
 const { crearProducto } = require('../Middleware/crearProducto.middleware')
 const { crearMarca } = require('../Middleware/crearMarca.middleware')
 const { Cell, Brand } = require('../db');
@@ -9,7 +9,8 @@ const { Op } = require("sequelize");
 const router = Router();
 
 
-router.get('/', async (req, res, next) => {
+
+router.get('/home', async (req, res, next) => {
   const filters = req.query;
   let condition = {}
   try {
@@ -52,7 +53,7 @@ router.get('/', async (req, res, next) => {
   catch (error) { next(error.message); console.log(error.message) }
 })
 
-router.get('/:id', async (req, res, next) => {
+router.get('/home/:id', async (req, res, next) => {
   let { id } = req.params
   try {
     let product = await obtenerProductosById(id)
@@ -95,6 +96,21 @@ router.put('/:id', async (req, res, next) => {
   }
   catch (error) { next(error) }
 })
+
+
+router.get('/panel', async (req, res, next) => {
+  
+  try {
+    let products = await obtenerProductosAdmin();
+    products.length > 0 ?
+    res.send(products) : res.send({ message: "No products" });
+  }
+  catch (error) { next(error) }
+  
+
+})
+
+
 
 
 
