@@ -21,7 +21,7 @@ const crearUser= async (name, email, password, image, location, direction, role)
         image: image,
         location: location,
         direction: direction,
-        disabled: true
+        disabled: false
     })
     await user.setRole(rol);
     user.save();
