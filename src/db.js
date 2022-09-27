@@ -42,7 +42,7 @@ Brand.hasMany(Cell);
 
 User.belongsToMany(Cell, {through: 'userCell'});
 Cell.belongsToMany(User, {through: 'userCell'});
-// Order.belongsTo(User);
+Order.belongsTo(User);
       //FALTA IMPORTAR ORDERS
 Order.belongsToMany(Cell, {through: 'orderCell'});
 Cell.belongsToMany(Order, {through: 'orderCell'});
