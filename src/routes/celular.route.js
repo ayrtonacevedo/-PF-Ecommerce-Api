@@ -11,9 +11,14 @@ const router = Router();
 
 
 router.get('/home', async (req, res, next) => {
-  const filters = req.query;
+  const f = req.query;
   let condition = {}
+  let d = {
+    disabled: false
+  }
+  const filters = Object.assign(f, d)
   try {
+    console.log(filters)
     if (Object.keys(filters).length === 0) {
       const products = await obtenerProductos();
       return res.send(products)
@@ -28,7 +33,7 @@ router.get('/home', async (req, res, next) => {
         condition[key] = filters[key]
       }
     }
-    let products = await Cell.findAll({ include: [{ model: Brand }], where: condition })
+    let products = await Cell.findAll({ include: [{ model: Brand }], where: condition})
     if (filters.brand) {
       products = products.filter(e => e.brand.name === filters.brand)
     }
