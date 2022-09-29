@@ -15,7 +15,7 @@ const crearProducto = async (line, model, capacity, price, stock, image, spec, m
         spec:spec,
         memoryRAM: memoryRAM,
         description:description,
-        disabled: true
+        disabled: false
     })
     await product.setBrand(mar)
     product.save();

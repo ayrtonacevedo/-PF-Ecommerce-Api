@@ -1,5 +1,5 @@
 const {Router}=require('express')
-const {obtenerUsers,obtenerUserById}=require('../Middleware/getUser.middleware')
+const {obtenerUsers,obtenerUserById, obtenerUsersAdmin}=require('../Middleware/getUser.middleware')
 const {crearUser}=require('../Middleware/crearUser.middleware')
 
 const {User, Role}=require("../db")
@@ -16,7 +16,7 @@ router.get('/', async(req,res,next)=>{
     catch(error){next(error); console.log(error)}
 })
 
-router.get('/:id', async(req,res,next)=>{
+router.get('/id/:id', async(req,res,next)=>{
     let {id}=req.params
     try{
         let user = await obtenerUserById(id)
@@ -58,6 +58,16 @@ router.put('/:id',async(req,res,next)=>{
       }
       catch(error){next(error)}
   })
+
+
+  router.get('/admin', async(req,res,next)=>{
+    try{
+        let users = await obtenerUsersAdmin()
+        users.length>0?
+        res.send(users):res.send({message:"No users"})
+    }
+    catch(error){next(error); console.log(error)}
+})
 
 
 

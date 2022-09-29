@@ -18,7 +18,7 @@ module.exports=(sequelize)=>{
             defaultValue: new Date()
         },
         payment:{
-            type:DataTypes.FLOAT,
+            type:DataTypes.STRING,
             allowNull:false
         },
         subTotal:{

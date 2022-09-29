@@ -1,7 +1,7 @@
 const {Brand, Cell,Op, Question}=require('../db')
 
 const obtenerProductos=async()=>{
-    let productos=await Cell.findAll({  where: { disabled: true },include:[{model:Brand}]})
+    let productos=await Cell.findAll({  where: { disabled: false },include:[{model:Brand}]})
     let toObj=[]
     productos?.map((e)=>{
         toObj.push({
@@ -38,7 +38,7 @@ const obtenerProductosById=async(id)=>{
         questions: e.questions
 
     }
-    if(e.disabled){
+    if(!e.disabled){
         return producto
     }
     
