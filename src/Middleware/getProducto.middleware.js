@@ -38,7 +38,7 @@ const obtenerProductosById=async(id)=>{
         questions: e.questions
 
     }
-    if(e.disabled){
+    if(!e.disabled){
         return producto
     }
     
