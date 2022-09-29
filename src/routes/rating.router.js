@@ -14,7 +14,6 @@ router.get('/:cellId', async (req, res, next) => {
             rating: e.rating,
             emailUser: e.emailUser,
             comment: e.comment,
-            emailAdmin: e.emailAdmin,
             date: e.date
          })
       })
