@@ -45,15 +45,14 @@ router.get('/role/:email', async (req, res, next) => {
 })
 
 router.post('/:cellId', async (req, res, next) => {
-   let { emailUser, rating } = req.body
+   let { emailUser, rating, comment } = req.body
    let { cellId } = req.params
    try {
       let date = new Date();
-      let r = await Rating.create({ emailUser, rating, date });
+      let r = await Rating.create({ emailUser, rating, date, comment });
 
       await r.setCell(cellId);
       r.save();
-
       res.send("Rating sent!")
    }
    catch (error) { next(error) }
