@@ -108,7 +108,7 @@ router.get('/panel', async (req, res, next) => {
 
   try {
     if (Object.keys(filters).length === 0) {
-      const products = await obtenerProductos();
+      const products = await obtenerProductosAdmin();
       return res.send(products)
     }
 
