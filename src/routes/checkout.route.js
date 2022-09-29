@@ -12,7 +12,7 @@ const router = Router();
 router.post("/",async(req,res)=>{
     try{
         const {id,amount, mail, arr, userIdName}=req.body;
-        console.log(arr);
+        
         // Line
         const line=arr.map(c=>c.line);
         const brand=arr.map(c=>c.brand)
