@@ -61,13 +61,47 @@ router.put('/:id',async(req,res,next)=>{
 
 
   router.get('/admin', async(req,res,next)=>{
-    try{
-        let users = await obtenerUsersAdmin()
-        users.length>0?
-        res.send(users):res.send({message:"No users"})
-    }
-    catch(error){next(error); console.log(error)}
-})
+
+        const filters = req.query;
+        let condition = {}
+      
+        try {
+          if (Object.keys(filters).length === 0) {
+            const users = await obtenerUsersAdmin();
+            return res.send(users)
+          }
+      
+          for (key in filters) {
+            if (key === "capacity" || key === "price") {
+              let [min, max] = filters[key].split("/");
+              condition[key] = { [Op.between]: [min, max] }
+            } else {
+              if (key === "role") { continue }
+              condition[key] = filters[key]
+            }
+          }
+          let users = await User.findAll({include:[{model:Role}], where: condition})
+          if (filters.role) {
+            users = users.filter(e => e.role.name === filters.role)
+          }
+          users = users.map((e) => {
+            return {
+                id: e.id,
+                name: e.name,
+                email: e.email,
+                password: e.password,
+                image: e.image,
+                location: e.location,
+                direction: e.direction,
+                disabled: e.disabled,
+                role: e.role.name
+            }
+          })
+          return res.send(users)
+        }
+        catch (error) { next(error.message); console.log(error.message) }
+    })
+
 
 
 
