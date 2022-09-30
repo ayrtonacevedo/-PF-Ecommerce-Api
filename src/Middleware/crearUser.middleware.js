@@ -10,10 +10,7 @@ const crearUser= async (name, email, password, image, location, direction, role)
     if(email==="nahirarroyo99@gmail.com"){
         role="Administrador"
     }
-
-    if(email === "asanchezdelaf2@gmail.com"){
-        role = "Administrador"
-    }
+  
 
     let rol = await Role.findOne({where: {name:role}})
 
