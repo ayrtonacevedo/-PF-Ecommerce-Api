@@ -14,7 +14,7 @@ router.post("/",async(req,res)=>{
         const {id,amount, mail, arr, userIdName}=req.body;
         
         // Line
-        const line=arr.map(c=>c.line);
+        const idCell=arr.map(c=>c.id);
         const brand=arr.map(c=>c.brand)
 
         const email = `
@@ -109,7 +109,7 @@ router.post("/",async(req,res)=>{
                     userMail: mail,
                     userId: userIdName
                 })
-                  let cell = await Cell.findAll({where: {line: line}})
+                  let cell = await Cell.findAll({where: {id: idCell}})
                   await order.addCell(cell);
             } catch(err) {
                 console.log(err)
