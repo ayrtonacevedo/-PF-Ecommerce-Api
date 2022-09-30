@@ -8,7 +8,8 @@ const question = require('./question.route')
 const sendClaimMail = require('./sendClaimMail')
 const rating = require('./rating.router')
 
-const router = Router();
+const router = Router()
+
 router.use('/celulares', cell)
 router.use('/marcas', brand)
 router.use('/users', user)
