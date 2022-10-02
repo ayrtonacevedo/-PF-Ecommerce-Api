@@ -15,7 +15,10 @@ router.post("/",async(req,res)=>{
         
         // Line
         const idCell=arr.map(c=>c.id);
-        const brand=arr.map(c=>c.brand)
+        const data=arr.map(c=>{
+            return  "Model :"+c.model +" Brand: " +c.brand 
+            
+        })
 
         const email = `
         <!DOCTYPE html>
@@ -55,12 +58,15 @@ router.post("/",async(req,res)=>{
                         height: 100PX;
                         color: rgb(141, 141, 141);
                     }
+                    .title{
+                        color:white;
+                    }
                 </style>
             </head>
             <body>
                 <div>
                     <div class="image">
-                        <h2>CELL STORE</h2>
+                        <h2 class="title">CELL STORE</h2>
                     </div>
                     <h1>Thanks!</h1>
                     <h3>Hi ${mail} 👋</h3>
@@ -75,7 +81,7 @@ router.post("/",async(req,res)=>{
                     <h3>Font: Cell Store</h3>
                     <h3>Products: </h3>
                     <div>
-                    <p>${brand}</p>
+                    <p>${data}</p>
                     </div>
                     <hr></hr>
                     <h3>Total [USD]: $${amount}</h3>
