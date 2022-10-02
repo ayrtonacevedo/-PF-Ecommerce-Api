@@ -30,4 +30,21 @@ const userOrders = async (req,res) => {
   }
 }
 
-module.exports= {getOrders,userOrders}
+const obtenerOrderById=async(id_Orders)=>{
+  
+  try {
+    let orders = await Order.findAll({
+      where: {id_Orders: id_Orders},
+      include: [{
+        all: true
+      }]
+      
+    })
+    let order = {}
+    order = orders[0]
+    return order
+  } catch (error) {
+    console.log('error en order users',error)
+  }
+}
+module.exports= {getOrders,userOrders,obtenerOrderById}
