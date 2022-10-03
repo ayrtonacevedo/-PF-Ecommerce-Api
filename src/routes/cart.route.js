@@ -3,7 +3,7 @@ const { Cell, User } = require('../db');
 const router = Router();
 
 router.get('/:id', async (req, res, next) => {
-  const {id} = req.params
+  const { id } = req.params
   const user = await User.findByPk(id)
   const cart = await user.getCart()
   return res.status(200).send(cart)
@@ -11,11 +11,11 @@ router.get('/:id', async (req, res, next) => {
 
 
 router.post('/', async (req, res, next) => {
-  const  { phoneId, userId } = req.body
+  const { phoneId, userId } = req.body
   try {
     const user = await User.findByPk(userId)
-    if(user && phoneId){
-      await user.addCart(phoneId) 
+    if (user && phoneId) {
+      await user.addCart(phoneId)
       return res.status(200).send("Added to cart")
     }
     res.status(406).send("Not added, missing field")
@@ -25,14 +25,15 @@ router.post('/', async (req, res, next) => {
 })
 
 router.delete('/', async (req, res, next) => {
-  const {userId, phoneId} = req.body
+  const { userId, phoneId } = req.body
+  console.log({ userId, phoneId });
+  if (!userId || !phoneId) {
+    return res.status(406).send("Not removed, missing field")
+  }
   try {
     const user = await User.findByPk(userId)
-    if(user && phoneId){
-      await user.removeCart(phoneId) 
-      return res.status(200).send("Removed from cart")
-    }
-    res.status(406).send("Not removed, missing field")
+    await user.removeCart(phoneId)
+    return res.status(200).send("Removed from cart")
   } catch (err) {
     res.status(406).send("something went wrong")
   }

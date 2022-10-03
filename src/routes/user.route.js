@@ -103,7 +103,20 @@ router.put('/:id',async(req,res,next)=>{
     })
 
 
+router.get('/getByEmail/:email', async (req, res)=>{
+    const {email} = req.params
+    console.log(email);
+    try {
+        if(!email){ return res.status(406).send("email is required")}
 
+        let user = await User.findOne({where:{email: email}})
+        console.log(user);
+        res.status(200).send(user)
+    } catch (error) {
+        res.send(error)
+        console.log(error);
+    }
+})
 
 
 
