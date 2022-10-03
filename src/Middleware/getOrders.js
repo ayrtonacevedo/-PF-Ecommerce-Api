@@ -40,9 +40,7 @@ const obtenerOrderById=async(id_Orders)=>{
       }]
       
     })
-    let order = {}
-    order = orders[0]
-    return order
+    return orders
   } catch (error) {
     console.log('error en order users',error)
   }
