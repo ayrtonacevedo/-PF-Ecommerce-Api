@@ -1,24 +1,24 @@
-const {Router} = require('express');
+const { Router } = require('express');
 const { default: Stripe } = require('stripe');
 const { Cell, Order } = require('../db');
 const transportator = require("../nodemailer/configurations")
 
-const {KEY_CHECK}= process.env;
+const { KEY_CHECK } = process.env
 
-const stripe= new Stripe(KEY_CHECK);
+const stripe = new Stripe(KEY_CHECK);
 
 const router = Router();
 
-router.post("/",async(req,res)=>{
-    try{
-        const {id,amount, mail, arr, userIdName}=req.body;
-        console.log("req.body!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",req.body);
+router.post("/", async (req, res) => {
+    try {
+        const { id, amount, mail, arr, userIdName } = req.body;
+        console.log("req.body!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", req.body);
         let cell
         // Line
-        const idCell=arr.map(c=>c.id);
-        const data=arr.map(c=>{
-            return  "Model :"+c.model +" Brand: " +c.brand 
-            
+        const idCell = arr.map(c => c.id);
+        const data = arr.map(c => {
+            return "Model :" + c.model + " Brand: " + c.brand
+
         })
 
         const email = `
@@ -97,64 +97,64 @@ router.post("/",async(req,res)=>{
             </body>
         </html>
         `;
-            await stripe.paymentIntents.create({
+        await stripe.paymentIntents.create({
             amount: parseInt(amount),
             receipt_email: mail,
             currency: "USD", //la moneda
             description: "Cell", //descripcion de producto
             payment_method: id, //id del fronted
             confirm: true, //confirm the payment at the same time
-            receipt_email:"f.s.b.rojas@gmail.com"
-            });
-            
-            try {
-                let order =  await Order.create({
-                    id_Orders: id,
-                    payment: 'card',
-                    subTotal: amount,
-                    paid: true,
-                    userMail: mail,
-                    userId: userIdName
-                })
-                  cell = await Cell.findAll({where: {id: idCell}})
-                  console.log("AAAAAAAAAAAAAAAAAAAA\nantes del doble for",cell)
-                  await order.addCell(cell);
-            } catch(err) {
-                console.log(err)
-            }
+            receipt_email: "f.s.b.rojas@gmail.com"
+        });
 
-            
-            transportator.sendMail({
-                from: '"Thanks For Buy In  Cell Store 👻"<phonesecommerce@gmail.com>',
-                to: mail,
-                subject: `Your receipt of Cell Store ${userIdName} 🧾`,
-                html: email
+        try {
+            let order = await Order.create({
+                id_Orders: id,
+                payment: 'card',
+                subTotal: amount,
+                paid: true,
+                userMail: mail,
+                userId: userIdName
             })
-            cell //todos los celulares vendidos
-            arr // todos los cells comprados y sus cantidades
-            Cell // todos los celulares
-            // cell.forEach(e => {
-                
-            // })
-            for(let i=0; i<cell.length; i++){
-                for(let j=0; j<arr.length; j++){
-                    if(cell[i].id === arr[j].id){
-                        cell[i].stock -= arr[j].quantity
-                    }
+            cell = await Cell.findAll({ where: { id: idCell } })
+            console.log("AAAAAAAAAAAAAAAAAAAA\nantes del doble for", cell)
+            await order.addCell(cell);
+        } catch (err) {
+            console.log(err)
+        }
+
+
+        transportator.sendMail({
+            from: '"Thanks For Buy In  Cell Store 👻"<phonesecommerce@gmail.com>',
+            to: mail,
+            subject: `Your receipt of Cell Store ${userIdName} 🧾`,
+            html: email
+        })
+        cell //todos los celulares vendidos
+        arr // todos los cells comprados y sus cantidades
+        Cell // todos los celulares
+        // cell.forEach(e => {
+
+        // })
+        for (let i = 0; i < cell.length; i++) {
+            for (let j = 0; j < arr.length; j++) {
+                if (cell[i].id === arr[j].id) {
+                    cell[i].stock -= arr[j].quantity
                 }
             }
-            cell.forEach(e => {
-                Cell.update({stock: e.stock},{where: {id: e.id}})
-            });
-            
-            console.log("CEL DESPOIS DEL DOBLE FOR",cell);
-            // await Cell.update(
-            //     { stock },
-            //     { where: { id } })
-            res.status(200).json({message: "Successful Payment"});
+        }
+        cell.forEach(e => {
+            Cell.update({ stock: e.stock }, { where: { id: e.id } })
+        });
 
-    }catch(error){
-         res.status(404).json(error.raw.message);
+        console.log("CEL DESPOIS DEL DOBLE FOR", cell);
+        // await Cell.update(
+        //     { stock },
+        //     { where: { id } })
+        res.status(200).json({ message: "Successful Payment" });
+
+    } catch (error) {
+        res.status(404).json(error.raw.message);
     }
 })
 
