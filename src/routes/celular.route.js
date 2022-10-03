@@ -11,8 +11,12 @@ const router = Router();
 
 
 router.get('/home', async (req, res, next) => {
-  const filters = req.query;
+  const f = req.query;
   let condition = {}
+  let d = {
+    disabled: false
+  }
+  const filters = Object.assign(f, d)
   try {
     if (Object.keys(filters).length === 0) {
       const products = await obtenerProductos();
@@ -28,7 +32,7 @@ router.get('/home', async (req, res, next) => {
         condition[key] = filters[key]
       }
     }
-    let products = await Cell.findAll({ include: [{ model: Brand }], where: condition })
+    let products = await Cell.findAll({ include: [{ model: Brand }], where: condition})
     if (filters.brand) {
       products = products.filter(e => e.brand.name === filters.brand)
     }
@@ -99,15 +103,47 @@ router.put('/:id', async (req, res, next) => {
 
 
 router.get('/panel', async (req, res, next) => {
-  
-  try {
-    let products = await obtenerProductosAdmin();
-    products.length > 0 ?
-    res.send(products) : res.send({ message: "No products" });
-  }
-  catch (error) { next(error) }
-  
+  const filters = req.query;
+  let condition = {}
 
+  try {
+    if (Object.keys(filters).length === 0) {
+      const products = await obtenerProductosAdmin();
+      return res.send(products)
+    }
+
+    for (key in filters) {
+      if (key === "capacity" || key === "price") {
+        let [min, max] = filters[key].split("/");
+        condition[key] = { [Op.between]: [min, max] }
+      } else {
+        if (key === "brand") { continue }
+        condition[key] = filters[key]
+      }
+    }
+    let products = await Cell.findAll({ include: [{ model: Brand }], where: condition})
+    if (filters.brand) {
+      products = products.filter(e => e.brand.name === filters.brand)
+    }
+    products = products.map((e) => {
+      return {
+        id: e.id,
+        line: e.line,
+        model: e.model,
+        capacity: e.capacity,
+        price: e.price,
+        stock: e.stock,
+        image: e.image,
+        spec: e.spec,
+        disabled: e.disabled,
+        memoryRAM: e.memoryRAM,
+        description: e.description,
+        brand: e.brand.name
+      }
+    })
+    return res.send(products)
+  }
+  catch (error) { next(error.message); console.log(error.message) }
 })
 
 

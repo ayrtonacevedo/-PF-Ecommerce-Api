@@ -11,9 +11,14 @@ const router = Router();
 
 router.post("/",async(req,res)=>{
     try{
-        const {id,amount, mail, arr}=req.body;
-        console.log(amount)
-        console.log(typeof amount)
+        const {id,amount, mail, arr, userIdName}=req.body;
+        
+        // Line
+        const idCell=arr.map(c=>c.id);
+        const data=arr.map(c=>{
+            return  "Model :"+c.model +" Brand: " +c.brand 
+            
+        })
 
         const email = `
         <!DOCTYPE html>
@@ -53,14 +58,15 @@ router.post("/",async(req,res)=>{
                         height: 100PX;
                         color: rgb(141, 141, 141);
                     }
+                    .title{
+                        color:white;
+                    }
                 </style>
             </head>
             <body>
                 <div>
                     <div class="image">
-                        <a href="">
-                            <img class="img" src="https://i.im.ge/2022/09/07/OZP87y.Icon.png" alt="iconImg"/>
-                        </a>
+                        <h2 class="title">CELL STORE</h2>
                     </div>
                     <h1>Thanks!</h1>
                     <h3>Hi ${mail} 👋</h3>
@@ -73,6 +79,10 @@ router.post("/",async(req,res)=>{
                     <hr></hr>
                     <h3>Billed to: ${mail}</h3>
                     <h3>Font: Cell Store</h3>
+                    <h3>Products: </h3>
+                    <div>
+                    <p>${data}</p>
+                    </div>
                     <hr></hr>
                     <h3>Total [USD]: $${amount}</h3>
                     <hr></hr>
@@ -102,10 +112,10 @@ router.post("/",async(req,res)=>{
                     payment: 'card',
                     subTotal: amount,
                     paid: true,
-                    userMail: mail
+                    userMail: mail,
+                    userId: userIdName
                 })
-                  console.log(order);
-                  let cell = await Cell.findAll({where: {line: (arr.flat())}})
+                  let cell = await Cell.findAll({where: {id: idCell}})
                   await order.addCell(cell);
             } catch(err) {
                 console.log(err)
@@ -115,7 +125,7 @@ router.post("/",async(req,res)=>{
             transportator.sendMail({
                 from: '"Thanks For Buy In  Cell Store 👻"<phonesecommerce@gmail.com>',
                 to: mail,
-                subject: `Your receipt of Cell Store  🧾`,
+                subject: `Your receipt of Cell Store ${userIdName} 🧾`,
                 html: email
             })
             

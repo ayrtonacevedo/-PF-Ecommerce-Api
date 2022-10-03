@@ -18,7 +18,7 @@ module.exports=(sequelize)=>{
             defaultValue: new Date()
         },
         payment:{
-            type:DataTypes.FLOAT,
+            type:DataTypes.STRING,
             allowNull:false
         },
         subTotal:{
@@ -28,10 +28,10 @@ module.exports=(sequelize)=>{
         paid:{
             type:DataTypes.BOOLEAN,
             allowNull:false
-        }
+        },
         // name:{type:DataTypes.STRING, allowNull: false},
         // date:{type: DataTypes.DATEONLY},
-        // status:{type: DataTypes.STRING, default: 'Pendiente'}
+        status:{type: DataTypes.STRING, defaultValue: 'Pendiente'}
     },{
         timestamps:false
     });
