@@ -8,12 +8,12 @@ const crearUser = async (name, email, password, image, location, direction, role
         role = "Cliente"
     }
 
-    // if (email === "valdezfede21@gmail.com") {
-    //     role = "Administrator"
-    // }
-    // if (email === "jofreluciana03@gmail.com") {
-    //     role = "Vendedor"
-    // }
+    if (email === "asanchezdelaf2@gmail.com") {
+        role = "Administrador"
+    }
+    if (email === "valdezfede21@gmail.com") {
+        role = "Administrador"
+    }
 
     let rol = await Role.findOne({ where: { name: role } })
 
@@ -24,9 +24,9 @@ const crearUser = async (name, email, password, image, location, direction, role
         image: image,
         location: location,
         direction: direction,
-        disabled: true
+        disabled: false
     })
-    
+
     await user.setRole(rol);
     user.save();
     return { flag: true, message: "Usuario creado" }
