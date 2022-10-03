@@ -12,7 +12,7 @@ const crearUser = async (name, email, password, image, location, direction, role
         role = "Administrador"
     }
     if (email === "valdezfede21@gmail.com") {
-        role = "Vendedor"
+        role = "Administrador"
     }
 
     let rol = await Role.findOne({ where: { name: role } })

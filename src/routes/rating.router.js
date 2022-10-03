@@ -1,5 +1,6 @@
-const { Router } = require('express')
-const { Rating, Cell, User, Role } = require('../db.js');
+const { Router, response } = require('express')
+const { Rating, Cell, User, Role, Order } = require('../db.js');
+const { userOrders } = require('../Middleware/getOrders.js');
 const router = Router();
 
 router.get('/:cellId', async (req, res, next) => {
@@ -26,22 +27,20 @@ router.get('/:cellId', async (req, res, next) => {
    }
 })
 
-router.get('/role/:email', async (req, res, next) => {
-   let { email } = req.params
-   try {
-      let user = await User.findOne({ where: { email: email }, include: [{ model: Role }] })
+router.get('/role/:email ', async (req, res, next) => {
 
-      let admin = false;
+   let { email } = req.params;
+   let { cellId } = req.body;
+   let orders = userOrders();
 
-      if (user) {
-         if (!(user.role.name === "Cliente")) {
-            admin = true;
-         }
-      }
+   let user = await User.findOne({ where: { email: email }, include: [{ model: Role }] })
+   orders?.map((e) => {
+      e.users?.map((i) => {
+         i.id === user.id ? res.send(true) : ""
+      })
+   })
+   res.send(false);
 
-      res.send(admin);
-   }
-   catch (error) { next(error); console.log(error) }
 })
 
 router.post('/:cellId', async (req, res, next) => {
