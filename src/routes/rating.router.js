@@ -28,16 +28,19 @@ router.get('/k/:cellId', async (req, res, next) => {
 
 router.get('/role', async (req, res, next) => {
    let { em, cellId } = req.query;
-   let validate = await Rating.findAll({ include: [{ model: Cell, where: { id: cellId } }], where: { emailUser: em } })
-   // validate.legth === 1 ? res.send("not Rating") : 
-   if (validate.length === 1) {
-      res.send(false)
-   }
+
+
    try {
       let user = await User.findOne({ where: { email: em }, include: [{ model: Role }] })
 
       if (!user) {
          res.send("usuario no existente")
+      }
+
+      let validate = await Rating.findAll({ include: [{ model: Cell, where: { id: cellId } }], where: { emailUser: user.email } })
+
+      if (validate.length >= 1) {
+         res.send(false)
       }
 
       let orders = await Order.findAll({
@@ -60,6 +63,8 @@ router.get('/role', async (req, res, next) => {
    catch (error) { next(error) }
 
 })
+
+
 
 router.post('/:cellId', async (req, res, next) => {
    let { emailUser, rating, comment } = req.body
