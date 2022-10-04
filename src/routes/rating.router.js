@@ -39,7 +39,7 @@ router.get('/role', async (req, res, next) => {
 
       let validate = await Rating.findAll({ include: [{ model: Cell, where: { id: cellId } }], where: { emailUser: user.email } })
 
-      if (validate.length === 1) {
+      if (validate.length >= 1) {
          res.send(false)
       }
  
