@@ -12,27 +12,27 @@ const router = Router();
 
 router.get('/home', async (req, res, next) => {
   const f = req.query;
+  console.log("--f--", f);
   let condition = {}
   let d = {
     disabled: false
   }
   const filters = Object.assign(f, d)
   try {
-    if (Object.keys(filters).length === 0) {
-      const products = await obtenerProductos();
-      return res.send(products)
-    }
-
     for (key in filters) {
+      if (key === "brand") { continue }
       if (key === "capacity" || key === "price") {
         let [min, max] = filters[key].split("/");
         condition[key] = { [Op.between]: [min, max] }
-      } else {
-        if (key === "brand") { continue }
-        condition[key] = filters[key]
+        continue
       }
+      if (key === "model") {
+        condition[key] = { [Op.substring]: filters[key] }
+        continue
+      }
+      condition[key] = filters[key]
     }
-    let products = await Cell.findAll({ include: [{ model: Brand }], where: condition})
+    let products = await Cell.findAll({ include: [{ model: Brand }], where: condition })
     if (filters.brand) {
       products = products.filter(e => e.brand.name === filters.brand)
     }
@@ -113,15 +113,19 @@ router.get('/panel', async (req, res, next) => {
     }
 
     for (key in filters) {
+      if (key === "brand") { continue }
       if (key === "capacity" || key === "price") {
         let [min, max] = filters[key].split("/");
         condition[key] = { [Op.between]: [min, max] }
-      } else {
-        if (key === "brand") { continue }
-        condition[key] = filters[key]
+        continue
       }
+      if (key === "model") {
+        condition[key] = { [Op.substring]: filters[key] }
+        continue
+      }
+      condition[key] = filters[key]
     }
-    let products = await Cell.findAll({ include: [{ model: Brand }], where: condition})
+    let products = await Cell.findAll({ include: [{ model: Brand }], where: condition })
     if (filters.brand) {
       products = products.filter(e => e.brand.name === filters.brand)
     }
