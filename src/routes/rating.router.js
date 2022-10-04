@@ -36,11 +36,13 @@ router.get('/role/:email ', async (req, res, next) => {
    let user = await User.findOne({ where: { email: email }, include: [{ model: Role }] })
    orders?.map((e) => {
       e.users?.map((i) => {
-         i.id === user.id ? res.send(true) : ""
+         // i.id === user.id ? res.send(true) : ""
+         if (i.id === user.id) {
+            res.send(true)
+         }
       })
    })
    res.send(false);
-
 })
 
 router.post('/:cellId', async (req, res, next) => {
