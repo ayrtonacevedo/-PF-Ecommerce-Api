@@ -12,7 +12,8 @@ const router = Router();
 router.post("/",async(req,res)=>{
     try{
         const {id,amount, mail, arr, userIdName}=req.body;
-        
+        console.log("req.body!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",req.body);
+        let cell
         // Line
         const idCell=arr.map(c=>c.id);
         const data=arr.map(c=>{
@@ -115,7 +116,8 @@ router.post("/",async(req,res)=>{
                     userMail: mail,
                     userId: userIdName
                 })
-                  let cell = await Cell.findAll({where: {id: idCell}})
+                  cell = await Cell.findAll({where: {id: idCell}})
+                  console.log("AAAAAAAAAAAAAAAAAAAA\nantes del doble for",cell)
                   await order.addCell(cell);
             } catch(err) {
                 console.log(err)
@@ -128,7 +130,27 @@ router.post("/",async(req,res)=>{
                 subject: `Your receipt of Cell Store ${userIdName} 🧾`,
                 html: email
             })
+            cell //todos los celulares vendidos
+            arr // todos los cells comprados y sus cantidades
+            Cell // todos los celulares
+            // cell.forEach(e => {
+                
+            // })
+            for(let i=0; i<cell.length; i++){
+                for(let j=0; j<arr.length; j++){
+                    if(cell[i].id === arr[j].id){
+                        cell[i].stock -= arr[j].quantity
+                    }
+                }
+            }
+            cell.forEach(e => {
+                Cell.update({stock: e.stock},{where: {id: e.id}})
+            });
             
+            console.log("CEL DESPOIS DEL DOBLE FOR",cell);
+            // await Cell.update(
+            //     { stock },
+            //     { where: { id } })
             res.status(200).json({message: "Successful Payment"});
 
     }catch(error){
