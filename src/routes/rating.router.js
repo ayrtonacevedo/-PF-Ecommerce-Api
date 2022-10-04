@@ -1,9 +1,8 @@
-const { Router, response } = require('express')
+const { Router} = require('express')
 const { Rating, Cell, User, Role, Order } = require('../db.js');
-const { userOrders } = require('../Middleware/getOrders.js');
 const router = Router();
 
-router.get('/:cellId', async (req, res, next) => {
+router.get('/k/:cellId', async (req, res, next) => {
    let { cellId } = req.params;
    try {
       let ratings = await Rating.findAll({ include: [{ model: Cell, where: { id: cellId } }] })
@@ -27,22 +26,36 @@ router.get('/:cellId', async (req, res, next) => {
    }
 })
 
-router.get('/role/:email ', async (req, res, next) => {
+router.get('/role', async (req, res, next) => {
+   let { em, cellId } = req.query;
+ 
 
-   let { email } = req.params;
-   let { cellId } = req.body;
-   let orders = userOrders();
+   try {
+      let user = await User.findOne({ where: { email: em }, include: [{ model: Role }] })
 
-   let user = await User.findOne({ where: { email: email }, include: [{ model: Role }] })
-   orders?.map((e) => {
-      e.users?.map((i) => {
-         // i.id === user.id ? res.send(true) : ""
-         if (i.id === user.id) {
-            res.send(true)
-         }
+      if(!user){
+         res.send("usuario no existente")
+      }
+ 
+      let orders = await Order.findAll({
+         where: {userId: user.id},
+         include: [{
+         all: true
+         }]
+         
       })
-   })
-   res.send(false);
+
+      orders?.map((e) => {
+         e.cells?.map((i) => {
+            if(i.id.toString() === cellId.toString()){
+               return res.send(true)
+            }
+         })
+      })
+      res.send(false);
+   }
+   catch (error) { next(error) }
+
 })
 
 router.post('/:cellId', async (req, res, next) => {
