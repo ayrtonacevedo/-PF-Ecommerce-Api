@@ -27,14 +27,19 @@ router.post('/', async (req, res, next) => {
 router.delete('/', async (req, res, next) => {
   const { userId, phoneId } = req.body
   console.log({ userId, phoneId });
-  if (!userId || !phoneId) {
+  if (!userId) {
     return res.status(406).send("Not removed, missing field")
   }
   try {
     const user = await User.findByPk(userId)
+    if(!phoneId){
+      await user.setCart([])
+      return res.status(200).send("All items has been removed from cart")
+    }
     await user.removeCart(phoneId)
-    return res.status(200).send("Removed from cart")
+    return res.status(200).send("Item removed from cart")
   } catch (err) {
+    console.log(err)
     res.status(406).send("something went wrong")
   }
 })

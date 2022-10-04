@@ -13,6 +13,7 @@ router.post("/",async(req,res)=>{
     try{
         const {id,amount, mail, arr, userIdName}=req.body;
         console.log("req.body!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",req.body);
+        if(!id || !amount || !mail || !arr || !userIdName){ return res.status(406).send("missing fields")}
         let cell
         // Line
         const idCell=arr.map(c=>c.id);
@@ -146,7 +147,7 @@ router.post("/",async(req,res)=>{
             cell.forEach(e => {
                 Cell.update({stock: e.stock},{where: {id: e.id}})
             });
-            
+
             console.log("CEL DESPOIS DEL DOBLE FOR",cell);
             // await Cell.update(
             //     { stock },
