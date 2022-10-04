@@ -154,6 +154,12 @@ router.post("/", async (req, res) => {
         //     { where: { id } })
         res.status(200).json({ message: "Successful Payment" });
 
+        console.log("CEL DESPOIS DEL DOBLE FOR", cell);
+        // await Cell.update(
+        //     { stock },
+        //     { where: { id } })
+        res.status(200).json({ message: "Successful Payment" });
+
     } catch (error) {
         res.status(404).json(error.raw.message);
     }
