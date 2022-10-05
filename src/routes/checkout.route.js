@@ -1,6 +1,6 @@
 const {Router} = require('express');
 const { default: Stripe } = require('stripe');
-const { Cell, Order } = require('../db');
+const { Cell, Order, Brand } = require('../db');
 const transportator = require("../nodemailer/configurations")
 
 const {KEY_CHECK}= process.env;
@@ -12,14 +12,14 @@ const router = Router();
 router.post("/",async(req,res)=>{
     try{
         const {id,amount, mail, arr, userIdName}=req.body;
-        console.log("req.body!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",req.body);
+        // console.log("req.body!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",req.body);
         if(!id || !amount || !mail || !arr || !userIdName){ return res.status(406).send("missing fields")}
         let cell
+        
         // Line
         const idCell=arr.map(c=>c.id);
         const data=arr.map(c=>{
-            return  "Model :"+c.model +" Brand: " +c.brand 
-            
+            return  "Model :"+c.model +" Line: "+c.line 
         })
 
         const email = `
@@ -118,7 +118,7 @@ router.post("/",async(req,res)=>{
                     userId: userIdName
                 })
                   cell = await Cell.findAll({where: {id: idCell}})
-                  console.log("AAAAAAAAAAAAAAAAAAAA\nantes del doble for",cell)
+                //   console.log("AAAAAAAAAAAAAAAAAAAA\nantes del doble for",cell)
                   await order.addCell(cell);
             } catch(err) {
                 console.log(err)
@@ -148,7 +148,7 @@ router.post("/",async(req,res)=>{
                 Cell.update({stock: e.stock},{where: {id: e.id}})
             });
 
-            console.log("CEL DESPOIS DEL DOBLE FOR",cell);
+            // console.log("CEL DESPOIS DEL DOBLE FOR",cell);
             // await Cell.update(
             //     { stock },
             //     { where: { id } })
