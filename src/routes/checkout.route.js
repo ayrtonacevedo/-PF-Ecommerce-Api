@@ -9,10 +9,11 @@ const stripe = new Stripe(KEY_CHECK);
 
 const router = Router();
 
-router.post("/", async (req, res) => {
-    try {
-        const { id, amount, mail, arr, userIdName } = req.body;
-        console.log("req.body!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", req.body);
+router.post("/",async(req,res)=>{
+    try{
+        const {id,amount, mail, arr, userIdName}=req.body;
+        console.log("req.body!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",req.body);
+        if(!id || !amount || !mail || !arr || !userIdName){ return res.status(406).send("missing fields")}
         let cell
         // Line
         const idCell = arr.map(c => c.id);
@@ -142,16 +143,15 @@ router.post("/", async (req, res) => {
                     cell[i].stock -= arr[j].quantity
                 }
             }
-        }
-        cell.forEach(e => {
-            Cell.update({ stock: e.stock }, { where: { id: e.id } })
-        });
+            cell.forEach(e => {
+                Cell.update({stock: e.stock},{where: {id: e.id}})
+            });
 
-        console.log("CEL DESPOIS DEL DOBLE FOR", cell);
-        // await Cell.update(
-        //     { stock },
-        //     { where: { id } })
-        res.status(200).json({ message: "Successful Payment" });
+            console.log("CEL DESPOIS DEL DOBLE FOR",cell);
+            // await Cell.update(
+            //     { stock },
+            //     { where: { id } })
+            res.status(200).json({message: "Successful Payment"});
 
     } catch (error) {
         res.status(404).json(error.raw.message);
