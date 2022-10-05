@@ -28,12 +28,12 @@ router.get('/k/:cellId', async (req, res, next) => {
 
 router.get('/role', async (req, res, next) => {
    let { em, cellId } = req.query;
-
+ 
 
    try {
       let user = await User.findOne({ where: { email: em }, include: [{ model: Role }] })
 
-      if (!user) {
+      if(!user){
          res.send("usuario no existente")
       }
 
@@ -42,18 +42,18 @@ router.get('/role', async (req, res, next) => {
       if (validate.length >= 1) {
          res.send(false)
       }
-
+ 
       let orders = await Order.findAll({
-         where: { userId: user.id },
+         where: {userId: user.id},
          include: [{
-            all: true
+         all: true
          }]
-
+         
       })
 
       orders?.map((e) => {
          e.cells?.map((i) => {
-            if (i.id.toString() === cellId.toString()) {
+            if(i.id.toString() === cellId.toString()){
                return res.send(true)
             }
          })
@@ -64,6 +64,9 @@ router.get('/role', async (req, res, next) => {
 
 })
 
+
+
+   /**/
 
 
 router.post('/:cellId', async (req, res, next) => {
