@@ -39,10 +39,6 @@ router.get('/role', async (req, res, next) => {
 
       let validate = await Rating.findAll({ include: [{ model: Cell, where: { id: cellId } }], where: { emailUser: user.email } })
 
-      if (validate.length >= 1) {
-         res.send(false)
-      }
-
       let orders = await Order.findAll({
          where: { userId: user.id },
          include: [{
@@ -51,14 +47,22 @@ router.get('/role', async (req, res, next) => {
 
       })
 
+      let cellsOrder = 0
+
       orders?.map((e) => {
          e.cells?.map((i) => {
             if (i.id.toString() === cellId.toString()) {
-               return res.send(true)
+               cellsOrder++ 
             }
          })
       })
-      res.send(false);
+
+      if (validate.length < cellsOrder) {
+         res.send(true)
+      }else{
+         res.send(false);
+      }
+      
    }
    catch (error) { next(error) }
 
