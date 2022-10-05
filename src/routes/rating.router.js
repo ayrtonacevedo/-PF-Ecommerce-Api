@@ -1,8 +1,8 @@
 const { Router } = require('express')
-const { Rating, Cell, User, Role } = require('../db.js');
+const { Rating, Cell, User, Role, Order } = require('../db.js');
 const router = Router();
 
-router.get('/:cellId', async (req, res, next) => {
+router.get('/k/:cellId', async (req, res, next) => {
    let { cellId } = req.params;
    try {
       let ratings = await Rating.findAll({ include: [{ model: Cell, where: { id: cellId } }] })
@@ -14,7 +14,6 @@ router.get('/:cellId', async (req, res, next) => {
             rating: e.rating,
             emailUser: e.emailUser,
             comment: e.comment,
-            emailAdmin: e.emailAdmin,
             date: e.date
          })
       })
@@ -27,35 +26,59 @@ router.get('/:cellId', async (req, res, next) => {
    }
 })
 
-router.get('/role/:email', async (req, res, next) => {
-   let { email } = req.params
+router.get('/role', async (req, res, next) => {
+   let { em, cellId } = req.query;
+
+
    try {
-      let user = await User.findOne({ where: { email: email }, include: [{ model: Role }] })
+      let user = await User.findOne({ where: { email: em }, include: [{ model: Role }] })
 
-      let admin = false;
-
-      if (user) {
-         if (!(user.role.name === "Cliente")) {
-            admin = true;
-         }
+      if (!user || user.length > 0) {
+         res.send(false)
       }
 
-      res.send(admin);
+      let validate = await Rating.findAll({ include: [{ model: Cell, where: { id: cellId } }], where: { emailUser: user.email } })
+
+      if (validate.length >= 1) {
+         res.send(false)
+      }
+
+      let orders = await Order.findAll({
+         where: { userId: user.id },
+         include: [{
+            all: true
+         }]
+
+      })
+
+      orders?.map((e) => {
+         e.cells?.map((i) => {
+            if (i.id.toString() === cellId.toString()) {
+               return res.send(true)
+            }
+         })
+      })
+      res.send(false);
    }
-   catch (error) { next(error); console.log(error) }
+   catch (error) { next(error) }
+
 })
 
+
+
+/**/
+
+
 router.post('/:cellId', async (req, res, next) => {
-   let { emailUser, emailAdmin, rating } = req.body
+   let { emailUser, rating, comment } = req.body
    let { cellId } = req.params
    try {
       let date = new Date();
-      let r = await Rating.create({ emailUser, emailAdmin, rating, date });
+      let r = await Rating.create({ emailUser, rating, date, comment });
 
       await r.setCell(cellId);
       r.save();
-
-      res.send("Question sent!")
+      res.send("Rating sent!")
    }
    catch (error) { next(error) }
 })
