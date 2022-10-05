@@ -1,11 +1,11 @@
-const { Router } = require('express');
+const {Router} = require('express');
 const { default: Stripe } = require('stripe');
 const { Cell, Order } = require('../db');
 const transportator = require("../nodemailer/configurations")
 
-const { KEY_CHECK } = process.env
+const {KEY_CHECK}= process.env;
 
-const stripe = new Stripe(KEY_CHECK);
+const stripe= new Stripe(KEY_CHECK);
 
 const router = Router();
 
@@ -16,10 +16,10 @@ router.post("/",async(req,res)=>{
         if(!id || !amount || !mail || !arr || !userIdName){ return res.status(406).send("missing fields")}
         let cell
         // Line
-        const idCell = arr.map(c => c.id);
-        const data = arr.map(c => {
-            return "Model :" + c.model + " Brand: " + c.brand
-
+        const idCell=arr.map(c=>c.id);
+        const data=arr.map(c=>{
+            return  "Model :"+c.model +" Brand: " +c.brand 
+            
         })
 
         const email = `
@@ -98,49 +98,50 @@ router.post("/",async(req,res)=>{
             </body>
         </html>
         `;
-        await stripe.paymentIntents.create({
+            await stripe.paymentIntents.create({
             amount: parseInt(amount),
             receipt_email: mail,
             currency: "USD", //la moneda
             description: "Cell", //descripcion de producto
             payment_method: id, //id del fronted
             confirm: true, //confirm the payment at the same time
-            receipt_email: "f.s.b.rojas@gmail.com"
-        });
+            receipt_email:"f.s.b.rojas@gmail.com"
+            });
+            
+            try {
+                let order =  await Order.create({
+                    id_Orders: id,
+                    payment: 'card',
+                    subTotal: amount,
+                    paid: true,
+                    userMail: mail,
+                    userId: userIdName
+                })
+                  cell = await Cell.findAll({where: {id: idCell}})
+                  console.log("AAAAAAAAAAAAAAAAAAAA\nantes del doble for",cell)
+                  await order.addCell(cell);
+            } catch(err) {
+                console.log(err)
+            }
 
-        try {
-            let order = await Order.create({
-                id_Orders: id,
-                payment: 'card',
-                subTotal: amount,
-                paid: true,
-                userMail: mail,
-                userId: userIdName
+            
+            transportator.sendMail({
+                from: '"Thanks For Buy In  Cell Store 👻"<phonesecommerce@gmail.com>',
+                to: mail,
+                subject: `Your receipt of Cell Store ${userIdName} 🧾`,
+                html: email
             })
-            cell = await Cell.findAll({ where: { id: idCell } })
-            console.log("AAAAAAAAAAAAAAAAAAAA\nantes del doble for", cell)
-            await order.addCell(cell);
-        } catch (err) {
-            console.log(err)
-        }
-
-
-        transportator.sendMail({
-            from: '"Thanks For Buy In  Cell Store 👻"<phonesecommerce@gmail.com>',
-            to: mail,
-            subject: `Your receipt of Cell Store ${userIdName} 🧾`,
-            html: email
-        })
-        cell //todos los celulares vendidos
-        arr // todos los cells comprados y sus cantidades
-        Cell // todos los celulares
-        // cell.forEach(e => {
-
-        // })
-        for (let i = 0; i < cell.length; i++) {
-            for (let j = 0; j < arr.length; j++) {
-                if (cell[i].id === arr[j].id) {
-                    cell[i].stock -= arr[j].quantity
+            cell //todos los celulares vendidos
+            arr // todos los cells comprados y sus cantidades
+            Cell // todos los celulares
+            // cell.forEach(e => {
+                
+            // })
+            for(let i=0; i<cell.length; i++){
+                for(let j=0; j<arr.length; j++){
+                    if(cell[i].id === arr[j].id){
+                        cell[i].stock -= arr[j].quantity
+                    }
                 }
             }
             cell.forEach(e => {
@@ -153,8 +154,8 @@ router.post("/",async(req,res)=>{
             //     { where: { id } })
             res.status(200).json({message: "Successful Payment"});
 
-    } catch (error) {
-        res.status(404).json(error.raw.message);
+    }catch(error){
+         res.status(404).json(error.raw.message);
     }
 })
 
