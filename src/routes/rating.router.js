@@ -34,7 +34,11 @@ router.get('/role', async (req, res, next) => {
       let user = await User.findOne({ where: { email: em }, include: [{ model: Role }] })
 
       if(!user){
-         res.send("usuario no existente")
+         res.send(false)
+      }
+
+      if(user.length < 1){
+         res.send(false)
       }
 
       let validate = await Rating.findAll({ include: [{ model: Cell, where: { id: cellId } }], where: { emailUser: user.email } })
